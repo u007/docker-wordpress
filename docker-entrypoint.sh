@@ -1,6 +1,13 @@
 #!/bin/bash
 set -e
 
+if [ -z "$(ls -A "/etc/nginx/ssl/cert.pem")" ]; then
+  # apache setup
+  chmod 600 -R /etc/apache2/ssl
+  openssl req -nodes -new -x509 -keyout /etc/apache2/ssl/key.pem -out /etc/apache2/ssl/cert.pem -subj "/C=$COUNTRY/ST=/L=/O=$ORGANISATION/OU=DevOps/CN=$DOMAIN/emailAddress=$SUPPORT_EMAIL"
+fi
+
+
 if [[ "$1" == apache2* ]] || [ "$1" == php-fpm ]; then
 	if [ -n "$MYSQL_PORT_3306_TCP" ]; then
 		if [ -z "$WORDPRESS_DB_HOST" ]; then
